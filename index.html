@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitoring Stok GPM - Kabupaten Lahat</title>
+
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f9;}
+
+/* ===== BANNER ===== */
+.banner{
+background:linear-gradient(90deg,#1b5e20,#2e7d32);
+color:white;
+padding:25px;
+text-align:center;
+}
+.banner img{
+height:80px;
+display:block;
+margin:0 auto 10px auto;
+}
+.banner h1{margin:5px 0;font-size:28px;}
+.banner h3{margin:5px 0;font-size:18px;font-weight:normal;}
+
+/* ===== TABEL ===== */
+.container{padding:20px;overflow-x:auto;}
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+th, td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+th{background:#2e7d32;color:white;}
+.status{
+padding:5px 10px;
+border-radius:8px;
+font-weight:bold;
+display:inline-block;
+}
+.habis{background:#d32f2f;color:white;}
+.menipis{background:#fbc02d;color:black;}
+.aman{background:#388e3c;color:white;}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+th,td{font-size:12px;padding:8px;}
+.banner h1{font-size:20px;}
+.banner h3{font-size:14px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="banner">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Lambang_Kabupaten_Lahat.jpg/500px-Lambang_Kabupaten_Lahat.jpg">
+<h1>GERAKAN PANGAN MURAH (GPM)</h1>
+<h3>DINAS KETAHANAN PANGAN KABUPATEN LAHAT</h3>
+Monitoring Distribusi & Stok Pangan
+</div>
+
+<div class="container">
+<table id="stokTable">
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Lokasi</th>
+<th>Komoditas</th>
+<th>Stok Masuk</th>
+<th>Stok Keluar</th>
+<th>Sisa Stok</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<!-- Data akan muncul di sini -->
+</tbody>
+</table>
+</div>
+
+<script>
+const apiURL = "https://script.google.com/macros/s/AKfycbyQw_W5WOU0T5YkyygmIWaY_7sHCpBpJT84ExzJBTo0uQf_SPVPQOlhuWyAAzvR7FYO_Q/exec";
+
+fetch(apiURL)
+.then(res => res.json())
+.then(data => {
+    const tbody = document.querySelector("#stokTable tbody");
+    tbody.innerHTML = "";
+
+    data.forEach(item => {
+        let statusClass="", statusText="";
+        if(item.sisa==0){
+            statusClass="habis"; statusText="STOK HABIS";
+        } else if(item.sisa<50){
+            statusClass="menipis"; statusText="STOK MENIPIS";
+        } else {
+            statusClass="aman"; statusText="STOK AMAN";
+        }
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${item.tanggal}</td>
+            <td>${item.lokasi}</td>
+            <td>${item.komoditas}</td>
+            <td>${item.masuk}</td>
+            <td>${item.keluar}</td>
+            <td>${item.sisa}</td>
+            <td><span class="status ${statusClass}">${statusText}</span></td>
+        `;
+        tbody.appendChild(row);
+    });
+});
+</script>
+
+</body>
+</html>
